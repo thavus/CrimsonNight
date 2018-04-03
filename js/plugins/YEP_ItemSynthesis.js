@@ -1579,15 +1579,38 @@ Scene_Synthesis.getAvailableRecipes = function(set, type, list) {
       var item = set[i];
       if (!item) continue;
       if (type === 0 && item.recipeItem) {
-        this.getAvailableSynthesisItems(item.recipeItem, type, list);
+        this.getAvailableSynthesisCookbooks(item, type, list);
       } else if (type === 1 && item.recipeWeapon) {
-        this.getAvailableSynthesisItems(item.recipeWeapon, type, list);
+        this.getAvailableSynthesisPotions(item, type, list); // FOR POTIONS
+        //this.getAvailableSynthesisItems(item.recipeWeapon, type, list);
       } else if (type === 2 && item.recipeArmor) {
         this.getAvailableSynthesisItems(item.recipeArmor, type, list);
-      }
+      } 
     }
 };
- 
+
+Scene_Synthesis.getAvailableSynthesisPotions = function(item, type, list) {
+    var array = item.recipeItem;
+    var length = array.length;
+    for (var i = 0; i < length; ++i) {
+      if (type === 0) var obj = $dataItems[array[i]];
+      if (type === 1 && (~item.name.indexOf("Potion") || ~item.name.indexOf("Poison") || ~item.name.indexOf("Concoctions"))) var obj = $dataItems[array[i]];
+      if (type === 2) var obj = $dataArmors[array[i]];
+      this.addSynthesisItem(obj, list);
+    }
+};
+
+Scene_Synthesis.getAvailableSynthesisCookbooks = function(item, type, list) {
+    var array = item.recipeItem;
+    var length = array.length;
+    for (var i = 0; i < length; ++i) {
+      if (type === 0 && ~item.name.indexOf("Cookbook")) var obj = $dataItems[array[i]];
+      if (type === 1) var obj = $dataWeapons[array[i]];
+      if (type === 2) var obj = $dataArmors[array[i]];
+      this.addSynthesisItem(obj, list);
+    }
+};
+
 Scene_Synthesis.getAvailableSynthesisItems = function(array, type, list) {
     var length = array.length;
     for (var i = 0; i < length; ++i) {
@@ -1623,6 +1646,7 @@ Scene_Synthesis.availableItems = function() {
  
 Scene_Synthesis.availableWeapons = function() {
     var list = this.getAvailableItems(1);
+    console.log(list);
     return this.sortList(list);
 };
  
@@ -1646,7 +1670,7 @@ Scene_Synthesis.sortList = function(list) {
 Scene_Synthesis.prototype.refreshWindows = function() {
     //this._statusWindow.refresh();
     this._listWindow.refresh();
-    this._goldWindow.refresh();
+    //this._goldWindow.refresh();
     this._ingredientsWindow.refresh(this._listWindow.item());
 };
  
@@ -1655,7 +1679,7 @@ Scene_Synthesis.prototype.create = function() {
     this.createHelpWindow();
     this.createCommandWindow();
     this.createListWindow();
-    this.createGoldWindow();
+    //this.createGoldWindow();
     this.createIngredientsWindow();
     this.createNumberWindow();
 };
@@ -1688,6 +1712,7 @@ Scene_Synthesis.prototype.createListWindow = function() {
     this._listWindow.setHandler('ok', this.onListOk.bind(this));
     this._listWindow.setHandler('cancel', this.onListCancel.bind(this));
     this._listWindow.setHelpWindow(this._helpWindow);
+    this._helpWindow.setText('Choose an option');
     this.addWindow(this._listWindow);
 };
  
@@ -1705,7 +1730,7 @@ Scene_Synthesis.prototype.createIngredientsWindow = function() {
     var wx = this._listWindow.width;
     var wy = this._listWindow.y;
     var ww = Graphics.boxWidth - wx;
-    var wh = Graphics.boxHeight - wy - this._goldWindow.height;
+    var wh = Graphics.boxHeight - wy;
     this._ingredientsWindow = new Window_SynthesisIngredients(wx, wy, ww, wh);
     this._listWindow._ingredients = this._ingredientsWindow;
     this.addWindow(this._ingredientsWindow);
@@ -1734,7 +1759,7 @@ Scene_Synthesis.prototype.onListOk = function() {
     this._item = this._listWindow.item();
     this._ingredientsWindow.hide();
     this._numberWindow.setup(this._item, this.maxBuy(), this.buyingPrice());
-    this._numberWindow.setCurrencyUnit(this.currencyUnit());
+    //this._numberWindow.setCurrencyUnit(this.currencyUnit());
     this._numberWindow.show();
     this._numberWindow.activate();
 };
