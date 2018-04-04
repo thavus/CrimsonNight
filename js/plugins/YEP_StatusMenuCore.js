@@ -1183,7 +1183,7 @@ Window_StatusInfo.prototype.drawStatesData = function(stateId, dx, dy, dw) {
     	var val = $dataStates[stateId].traits[i].value;
     	var symb = (val >= 1) ? '+' : '-';
 
-    	val = (val >= 1) ? val - 1 : (val > 1) ? 1 - val : val; 
+    	val = (val >= 1) ? val - 1 : (val < 1) ? 1 - val : val; 
     	val = Math.round(val*100);
     	// experience
     	if(code == 23 && id == 9){ 
@@ -1199,7 +1199,7 @@ Window_StatusInfo.prototype.drawStatesData = function(stateId, dx, dy, dw) {
     	}
     	// Bleeding/poison
     	if(code == 22 && id == 7){ 
-    		stateTxt += val + '% HP per turn';
+    		stateTxt += '-' + (val-100) + '% HP per turn';
     	}
     	if(symb == '+'){
     		//this.changeTextColor('#319e22');

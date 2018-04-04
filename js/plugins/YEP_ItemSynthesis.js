@@ -1043,10 +1043,19 @@ Window_SynthesisList.prototype.updateHelp = function() {
     }
 
   setHelpWindowItem = function(item){
-    //console.log(item);
+    console.log(item);
     var text = '';
-    text += (item.meta['Hunger Restore'] !== '0' && typeof item.meta['Hunger Restore'] !== 'undefined') ? "Restores " + item.meta['Hunger Restore'] + " hunger" : "Restores no hunger";
-    text += '.'
+    if(item.name == "Health Potion") {
+      text += 'Regenerates health. ';
+    }
+    if(item.name == "Cure Poison") {
+      text += 'Cures Poison. ';
+    }
+    if(item.meta['Hunger Restore'] !== '0' && typeof item.meta['Hunger Restore'] !== 'undefined'){
+      text += "Restores " + (Math.round(item.meta['Hunger Restore']/10)) + "% hunger."
+    } else {
+      text += "Restores no hunger.";
+    }
     return text;
   }
 };
