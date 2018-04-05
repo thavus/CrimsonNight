@@ -809,7 +809,14 @@ Yanfly.IS.Game_Interpreter_pluginCommand =
     Game_Interpreter.prototype.pluginCommand;
 Game_Interpreter.prototype.pluginCommand = function(command, args) {
     Yanfly.IS.Game_Interpreter_pluginCommand.call(this, command, args)
-    if (command === 'OpenSynthesis') this.gotoSceneSynthesis(args);
+    if (command === 'OpenSynthesisCook') {
+      $gameTemp.craftType = "cook";
+      this.gotoSceneSynthesis(args);
+    }
+    if (command === 'OpenSynthesisBrew') {
+      $gameTemp.craftType = "brew";
+      this.gotoSceneSynthesis(args);
+    }
     if (command === 'ShowSynthesis') $gameSystem._showSynthesis = true;
     if (command === 'HideSynthesis') $gameSystem._showSynthesis = false;
     if (command === 'EnableSynthesis') $gameSystem._enableSynthesis = true;
@@ -897,7 +904,15 @@ Window_SynthesisCommand.prototype.addCustomCommand = function() {
       Scene_Synthesis.addSynthesisItem(recipe, list);
     }
     Scene_Synthesis.sortList(list);
-    this.addCommand(books[i].name, books[i].name, true);
+    if($gameTemp.craftType == "cook"){
+      if(books[i].name.indexOf('Cookbook') !== -1){
+        this.addCommand(books[i].name, books[i].name, true);
+      }
+    }else{
+      if(books[i].name.indexOf('Cookbook') == -1){
+        this.addCommand(books[i].name, books[i].name, true);
+      }
+    }
     list = [];
   }
 //sean
