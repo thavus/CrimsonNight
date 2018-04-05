@@ -899,6 +899,21 @@ Window_SynthesisCommand.prototype.addItemCommands = function() {
 };
  
 Window_SynthesisCommand.prototype.addCustomCommand = function() {
+  var list = [];
+  var books = Scene_Synthesis.getHeldBooks();
+  var length = books.length;
+  console.log(books);
+  for(var i = 0; i < length; ++i){
+    var recipeLength = books[i].recipeItem.length;
+    for(var j = 0; j < recipeLength; ++j){
+      var recipe = $dataItems[books[i].recipeItem[j]];
+      Scene_Synthesis.addSynthesisItem(recipe, list);
+    }
+    Scene_Synthesis.sortList(list);
+    this.addCommand(books[i].name, books[i].name, true);
+    list = [];
+  }
+//sean
 };
  
 Window_SynthesisCommand.prototype.addFinishCommand = function() {
@@ -1043,7 +1058,6 @@ Window_SynthesisList.prototype.updateHelp = function() {
     }
 
   setHelpWindowItem = function(item){
-    console.log(item);
     var text = '';
     if(item.name == "Health Potion") {
       text += 'Regenerates health. ';
@@ -1085,7 +1099,7 @@ Window_SynthesisList.prototype.setCategory = function(symbol) {
     this._categorySymbol = symbol;
     this.refresh();
 };
- 
+ // this happens on 'hover' over a selection
 Window_SynthesisList.prototype.refresh = function() {
     if (this._commandWindow) {
       this._categorySymbol = this._commandWindow.currentSymbol();
@@ -1094,7 +1108,7 @@ Window_SynthesisList.prototype.refresh = function() {
     this.createContents();
     this.drawAllItems();
 };
- 
+
 Window_SynthesisList.prototype.makeItemList = function() {
     this._data = [];
     if (this._commandWindow.currentSymbol() === 'item') {
@@ -1103,7 +1117,24 @@ Window_SynthesisList.prototype.makeItemList = function() {
       this._data = Scene_Synthesis.availableWeapons();
     } else if (this._commandWindow.currentSymbol() === 'armor') {
       this._data = Scene_Synthesis.availableArmors();
+    } else {
+      var list = [];
+      var books = Scene_Synthesis.getHeldBooks();
+      var length = books.length;
+      console.log(books);
+      for(var i = 0; i < length; ++i){
+        var recipeLength = books[i].recipeItem.length;
+        if (this._commandWindow.currentSymbol() === books[i].name){
+          for(var j = 0; j < recipeLength; ++j){
+            var recipe = $dataItems[books[i].recipeItem[j]];
+            Scene_Synthesis.addSynthesisItem(recipe, list);
+          }
+        }
+        Scene_Synthesis.sortList(list);
+        this._data = list;
+      }
     }
+    // sean - checks the command windows
 };
  
 Window_SynthesisList.prototype.maxItems = function() {
@@ -1571,6 +1602,36 @@ Scene_Synthesis.addSynthesisItem = function(obj, list) {
     list.push(obj);
 };
  
+
+Scene_Synthesis.getHeldBooks = function() {
+  var list = [];
+  var items = $gameParty.items();
+  var length = items.length;
+  list = this.checkItemsForBook(items);
+
+  return list;
+}
+
+Scene_Synthesis.checkItemsForBook = function(items) {
+  var list = [];
+  var length = items.length;
+  for(var i = 0; i < length; ++i){
+    var item = items[i];
+    if(item.recipeItem.length > 0){
+      list.push(item);
+    }
+  }
+  return list
+}
+
+Scene_Synthesis.getRecipeItemsFromBook = function(array, list) {
+    var length = array.length;
+    for (var i = 0; i < length; ++i) {
+      var obj = $dataItems[array[i]];
+      this.addSynthesisItem(obj, list);
+    }
+};
+
 Scene_Synthesis.getAvailableItems = function(type) {
     var list = [];
     var lib = this.availableLibrary();
@@ -1655,7 +1716,6 @@ Scene_Synthesis.availableItems = function() {
  
 Scene_Synthesis.availableWeapons = function() {
     var list = this.getAvailableItems(1);
-    console.log(list);
     return this.sortList(list);
 };
  
@@ -1663,7 +1723,7 @@ Scene_Synthesis.availableArmors = function() {
     var list = this.getAvailableItems(2);
     return this.sortList(list);
 };
- 
+
 Scene_Synthesis.sortList = function(list) {
     list.sort(function(a, b) {
         var p1 = a.id;
