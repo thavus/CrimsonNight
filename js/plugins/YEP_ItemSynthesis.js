@@ -881,21 +881,8 @@ Window_SynthesisCommand.prototype.itemTextAlign = function() {
 };
  
 Window_SynthesisCommand.prototype.makeCommandList = function() {
-    this.addItemCommands();
     this.addCustomCommand();
     this.addFinishCommand();
-};
- 
-Window_SynthesisCommand.prototype.addItemCommands = function() {
-    if (Scene_Synthesis.availableItems().length > 0) {
-      this.addCommand(Yanfly.Param.ISItemCmd, 'item', true);
-    }
-    if (Scene_Synthesis.availableWeapons().length > 0) {
-      this.addCommand(Yanfly.Param.ISWeaponCmd, 'weapon', true);
-    }
-    if (Scene_Synthesis.availableArmors().length > 0) {
-      this.addCommand(Yanfly.Param.ISArmorCmd, 'armor', true);
-    }
 };
  
 Window_SynthesisCommand.prototype.addCustomCommand = function() {
@@ -1110,31 +1097,23 @@ Window_SynthesisList.prototype.refresh = function() {
 };
 
 Window_SynthesisList.prototype.makeItemList = function() {
-    this._data = [];
-    if (this._commandWindow.currentSymbol() === 'item') {
-      this._data = Scene_Synthesis.availableItems();
-    } else if (this._commandWindow.currentSymbol() === 'weapon') {
-      this._data = Scene_Synthesis.availableWeapons();
-    } else if (this._commandWindow.currentSymbol() === 'armor') {
-      this._data = Scene_Synthesis.availableArmors();
-    } else {
-      var list = [];
-      var books = Scene_Synthesis.getHeldBooks();
-      var length = books.length;
-      console.log(books);
-      for(var i = 0; i < length; ++i){
-        var recipeLength = books[i].recipeItem.length;
-        if (this._commandWindow.currentSymbol() === books[i].name){
-          for(var j = 0; j < recipeLength; ++j){
-            var recipe = $dataItems[books[i].recipeItem[j]];
-            Scene_Synthesis.addSynthesisItem(recipe, list);
-          }
-        }
-        Scene_Synthesis.sortList(list);
-        this._data = list;
+  this._data = [];
+  var list = [];
+  var books = Scene_Synthesis.getHeldBooks();
+  var length = books.length;
+  console.log(books);
+  for(var i = 0; i < length; ++i){
+    var recipeLength = books[i].recipeItem.length;
+    if (this._commandWindow.currentSymbol() === books[i].name){
+      for(var j = 0; j < recipeLength; ++j){
+        var recipe = $dataItems[books[i].recipeItem[j]];
+        Scene_Synthesis.addSynthesisItem(recipe, list);
       }
     }
-    // sean - checks the command windows
+    Scene_Synthesis.sortList(list);
+    this._data = list;
+  }
+  // sean - checks the command windows
 };
  
 Window_SynthesisList.prototype.maxItems = function() {
@@ -1624,106 +1603,6 @@ Scene_Synthesis.checkItemsForBook = function(items) {
   return list
 }
 
-Scene_Synthesis.getRecipeItemsFromBook = function(array, list) {
-    var length = array.length;
-    for (var i = 0; i < length; ++i) {
-      var obj = $dataItems[array[i]];
-      this.addSynthesisItem(obj, list);
-    }
-};
-
-Scene_Synthesis.getAvailableItems = function(type) {
-    var list = [];
-    var lib = this.availableLibrary();
-    var length = lib.length;
-    for (var i = 0; i < length; ++i) {
-      var set = lib[i];
-      this.getAvailableRecipes(set, type, list);
-    }
-    return list;
-};
- 
-Scene_Synthesis.getAvailableRecipes = function(set, type, list) {
-    var length = set.length;
-    for (var i = 0; i < length; ++i) {
-      var item = set[i];
-      if (!item) continue;
-      if (type === 0 && item.recipeItem) {
-        this.getAvailableSynthesisCookbooks(item, type, list);
-      } else if (type === 1 && item.recipeWeapon) {
-        this.getAvailableSynthesisPotions(item, type, list); // FOR POTIONS
-        //this.getAvailableSynthesisItems(item.recipeWeapon, type, list);
-      } else if (type === 2 && item.recipeArmor) {
-        this.getAvailableSynthesisItems(item.recipeArmor, type, list);
-      } 
-    }
-};
-
-Scene_Synthesis.getAvailableSynthesisPotions = function(item, type, list) {
-    var array = item.recipeItem;
-    var length = array.length;
-    for (var i = 0; i < length; ++i) {
-      if (type === 0) var obj = $dataItems[array[i]];
-      if (type === 1 && (~item.name.indexOf("Potion") || ~item.name.indexOf("Poison") || ~item.name.indexOf("Concoctions"))) var obj = $dataItems[array[i]];
-      if (type === 2) var obj = $dataArmors[array[i]];
-      this.addSynthesisItem(obj, list);
-    }
-};
-
-Scene_Synthesis.getAvailableSynthesisCookbooks = function(item, type, list) {
-    var array = item.recipeItem;
-    var length = array.length;
-    for (var i = 0; i < length; ++i) {
-      if (type === 0 && ~item.name.indexOf("Cookbook")) var obj = $dataItems[array[i]];
-      if (type === 1) var obj = $dataWeapons[array[i]];
-      if (type === 2) var obj = $dataArmors[array[i]];
-      this.addSynthesisItem(obj, list);
-    }
-};
-
-Scene_Synthesis.getAvailableSynthesisItems = function(array, type, list) {
-    var length = array.length;
-    for (var i = 0; i < length; ++i) {
-      if (type === 0) var obj = $dataItems[array[i]];
-      if (type === 1) var obj = $dataWeapons[array[i]];
-      if (type === 2) var obj = $dataArmors[array[i]];
-      this.addSynthesisItem(obj, list);
-    }
-};
- 
-Scene_Synthesis.availableLibrary = function() {
-    if ($gameTemp._synthRecipe) {
-      return [[$gameTemp._synthRecipe]];
-    }
-    var library = [];
-    library.push($gameParty.items());
-    library.push($gameParty.weapons());
-    library.push($gameParty.armors());
-    if (Yanfly.Param.ISEquRecipes) {
-      var length = $gameParty.allMembers().length;
-      for (var i = 0; i < length; ++i) {
-        var member = $gameParty.allMembers()[i];
-        if (member) library.push(member.equips());
-      }
-    }
-    return library;
-};
- 
-Scene_Synthesis.availableItems = function() {
-    var list = this.getAvailableItems(0);
-    return this.sortList(list);
-};
- 
-Scene_Synthesis.availableWeapons = function() {
-    var list = this.getAvailableItems(1);
-    return this.sortList(list);
-};
- 
-Scene_Synthesis.availableArmors = function() {
-    var list = this.getAvailableItems(2);
-    return this.sortList(list);
-};
-
 Scene_Synthesis.sortList = function(list) {
     list.sort(function(a, b) {
         var p1 = a.id;
@@ -1742,7 +1621,7 @@ Scene_Synthesis.prototype.refreshWindows = function() {
     //this._goldWindow.refresh();
     this._ingredientsWindow.refresh(this._listWindow.item());
 };
- 
+
 Scene_Synthesis.prototype.create = function() {
     Scene_MenuBase.prototype.create.call(this);
     this.createHelpWindow();
