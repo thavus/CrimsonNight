@@ -1069,8 +1069,9 @@ Window_SynthesisList.prototype.updateHelp = function() {
     }
     if(item.meta['Hunger Restore'] !== '0' && typeof item.meta['Hunger Restore'] !== 'undefined'){
       text += "Restores " + (Math.round(item.meta['Hunger Restore']/10)) + "% hunger."
-    } else {
-      text += "Restores no hunger.";
+    }
+    if(item.meta['Sleep Restore'] !== '0' && typeof item.meta['Sleep Restore'] !== 'undefined'){
+      text += "Restores " + (Math.round(item.meta['Sleep Restore']/10)) + "% sleep."
     }
     return text;
   }

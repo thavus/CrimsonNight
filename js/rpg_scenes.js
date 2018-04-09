@@ -344,6 +344,7 @@ Scene_Title.prototype.playTitleMusic = function() {
 // The scene class of the map screen.
 
 function Scene_Map() {
+    console.log("map");
     this.initialize.apply(this, arguments);
 }
 
@@ -928,7 +929,13 @@ Scene_ItemBase.prototype.hideSubWindow = function(window) {
 };
 
 Scene_ItemBase.prototype.onActorOk = function() {
-    if (this.canUse() || (this.item().meta['Hunger Restore'] !== '0' && typeof this.item().meta['Hunger Restore'] !== 'undefined')) {
+    if (this.canUse() || 
+        (this.item().meta['Hunger Restore'] !== '0' && 
+            typeof this.item().meta['Hunger Restore'] !== 'undefined' &&
+            this.user().hunger < 1000) || 
+        (this.item().meta['Sleep Restore'] !== '0' && 
+            typeof this.item().meta['Sleep Restore'] !== 'undefined'  &&
+            this.user().sleep < 1000)) {
         this.useItem();
     } else {
         SoundManager.playBuzzer();
@@ -953,8 +960,8 @@ Scene_ItemBase.prototype.determineItem = function() {
 };
 
 Scene_ItemBase.prototype.useItem = function() {
-    $gameVariables.setValue(4, $gameVariables.value(4) + Number(this.item().meta['Hunger Restore']));
-    if($gameVariables.value(4) > 1000){$gameVariables.setValue(4,1000)}
+    this.handleHunger();
+    this.handleSleep();
     this.playSeForItem();
     this.user().useItem(this.item());
     this.applyItem();
@@ -962,6 +969,16 @@ Scene_ItemBase.prototype.useItem = function() {
     this.checkGameover();
     this._actorWindow.refresh();
 };
+
+Scene_ItemBase.prototype.handleHunger = function() {
+    this.user().hunger += Number(this.item().meta['Hunger Restore']);
+    this.user().hunger = (this.user().hunger > 1000) ?  1000 : this.user().hunger;
+}
+
+Scene_ItemBase.prototype.handleSleep = function() {
+    this.user().sleep += Number(this.item().meta['Sleep Restore']);
+    this.user().sleep = (this.user().sleep > 1000) ?  1000 : this.user().sleep;
+}
 
 Scene_ItemBase.prototype.activateItemWindow = function() {
     this._itemWindow.refresh();

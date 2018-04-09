@@ -2119,6 +2119,8 @@ Object.defineProperties(Game_BattlerBase.prototype, {
     tp: { get: function() { return this._tp; }, configurable: true },
     // Hunger
     hunger: { get: function() { return this._hunger; }, configurable: true },
+    // Sleep
+    sleep: { get: function() { return this._sleep; }, configurable: true },
     // Maximum Hit Points
     mhp: { get: function() { return this.param(0); }, configurable: true },
     // Maximum Magic Points
@@ -2135,8 +2137,10 @@ Object.defineProperties(Game_BattlerBase.prototype, {
     agi: { get: function() { return this.param(6); }, configurable: true },
     // LUcK
     luk: { get: function() { return this.param(7); }, configurable: true },
-    // Maximum Hhunger
+    // Maximum Hunger
     mHun: { get: function() { return this.param(8); }, configurable: true },
+    // Maximum Sleep
+    mSle: { get: function() { return this.param(9); }, configurable: true },
     // HIT rate
     hit: { get: function() { return this.xparam(0); }, configurable: true },
     // EVAsion rate
@@ -2188,6 +2192,7 @@ Game_BattlerBase.prototype.initMembers = function() {
     this._mp = 0;
     this._tp = 0;
     this._hunger = 0;
+    this._sleep = 0;
     this._hidden = false;
     this.clearParamPlus();
     this.clearStates();
@@ -2417,7 +2422,7 @@ Game_BattlerBase.prototype.paramPlus = function(paramId) {
 Game_BattlerBase.prototype.paramMin = function(paramId) {
     if (paramId === 1) {
         return 0;   // MMP
-    } else if (paramId === 8) {
+    } else if (paramId === 8 || paramId === 9) {
         return 0; // mHun
     } else {
         return 1;
@@ -2430,6 +2435,8 @@ Game_BattlerBase.prototype.paramMax = function(paramId) {
     } else if (paramId === 1) {
         return 9999;    // MMP
     } else if (paramId === 8) {
+        return 9999;    // Max Hunger or mHun
+    } else if (paramId === 9) {
         return 9999;    // Max Hunger or mHun
     } else {
         return 999;
@@ -2446,7 +2453,7 @@ Game_BattlerBase.prototype.paramBuffRate = function(paramId) {
 
 Game_BattlerBase.prototype.param = function(paramId) {
     var value = this.paramBase(paramId) + this.paramPlus(paramId);
-    if(paramId != 8 ){ // check hunger, currently no buffs to increase hunger pool
+    if(!(paramId === 8 || paramId === 9)){ // check hunger and sleep, currently no buffs to increase hunger pool
         value *= this.paramRate(paramId) * this.paramBuffRate(paramId);
     }
     var maxValue = this.paramMax(paramId);
@@ -2607,12 +2614,20 @@ Game_BattlerBase.prototype.setHunger = function(hunger) {
     this.refresh();
 };
 
+Game_BattlerBase.prototype.setSleep = function(sleep) {
+    this._sleep = sleep;
+    this.refresh();
+};
+
 Game_BattlerBase.prototype.maxTp = function() {
     return 100;
 };
 
-
 Game_BattlerBase.prototype.maxHunger = function() {
+    return 1000;
+};
+
+Game_BattlerBase.prototype.maxSleep = function() {
     return 1000;
 };
 
@@ -2620,19 +2635,19 @@ Game_BattlerBase.prototype.refresh = function() {
     this.stateResistSet().forEach(function(stateId) {
         this.eraseState(stateId);
     }, this);
-    console.log("hunger ", this._hunger);
     this._hp = this._hp.clamp(0, this.mhp);
     this._mp = this._mp.clamp(0, this.mmp);
     this._tp = this._tp.clamp(0, this.maxTp());
     this._hunger = this._hunger.clamp(0, this.maxHunger());
+    this._sleep = this._sleep.clamp(0, this.maxSleep());
 };
 
 Game_BattlerBase.prototype.recoverAll = function() {
     this.clearStates();
     this._hp = this.mhp;
     this._mp = this.mmp;
-    console.log("hunger set to max hunger", this.mHun);
     this._hunger = this.mHun;
+    this._sleep = this.mSle;
 };
 
 Game_BattlerBase.prototype.hpRate = function() {
@@ -3852,7 +3867,7 @@ Game_Actor.prototype.paramMax = function(paramId) {
 };
 
 Game_Actor.prototype.paramBase = function(paramId) {
-    if(paramId != 8){
+    if(!(paramId === 8 || paramId === 9)){
         return this.currentClass().params[paramId][this._level];
     } else {
         return 1000;
@@ -3860,7 +3875,7 @@ Game_Actor.prototype.paramBase = function(paramId) {
 };
 // checks if any equips can increase the value of a parameter (possibly increase hunger)
 Game_Actor.prototype.paramPlus = function(paramId) {
-    if(paramId != 8){
+    if(!(paramId === 8 || paramId === 9)){
         var value = Game_Battler.prototype.paramPlus.call(this, paramId);
         var equips = this.equips();
         for (var i = 0; i < equips.length; i++) {
