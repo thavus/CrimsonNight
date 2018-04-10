@@ -76,9 +76,11 @@
     if(onMap() && !isTalking() && !isBattling()){
       console.log(onMap());
       updatePartyMembers();
-
     }else{
-      stopTime();
+      /* This means player is not on the map, or is in a message.
+      ** Don't update any variables until not busy.
+      */
+      return;
     }
   }
 
@@ -103,19 +105,21 @@
       if (!members[i]) continue;
       if (members[i].hunger > 0){
         members[i].hunger -= 1;
+        members[i].sleep -= 1;
       }
     }
   }
 
   function startTime(){
-    timeInterval = setInterval(function(){ 
-      handleTime();
-    }, 2000);
+    if(!timeInterval){
+      timeInterval = setInterval(function(){ 
+        handleTime();
+      }, 2000);
+    }
   }
 
   function stopTime() {
     console.log("stopping time");
-    console.log(timeInterval);
     clearInterval(timeInterval);
     timeInterval = null;
   }
