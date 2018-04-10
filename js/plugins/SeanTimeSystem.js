@@ -103,10 +103,14 @@
     var length = $gameParty.members().length;
     for (var i = 0; i < length; ++i) {
       if (!members[i]) continue;
-      if (members[i].hunger > 0){
-        members[i].hunger -= 1;
-        members[i].sleep -= 1;
+      if (members[i]._hunger > 0){
+        members[i]._hunger -= 1;
       }
+      if(members[i]._sleep > 0){
+        members[i]._sleep -= 1;
+      }
+      checkSleep(members[i]);
+      checkHunger(members[i]);
     }
   }
 
@@ -118,10 +122,116 @@
     }
   }
 
-  function stopTime() {
-    console.log("stopping time");
-    clearInterval(timeInterval);
-    timeInterval = null;
+  function checkHunger(member){
+    if(member._hunger > 1000){
+      member._hunger = 1000;
+    }
+    if(member._hunger > 800){
+      member.addState(18);//full
+      member.removeState(19);//fed
+      member.removeState(20);//pekish
+      member.removeState(21);//hunger
+      member.removeState(22);//famished
+      member.removeState(23);//starving
+    } else if(member._hunger > 600){
+      member.removeState(18);//full
+      member.addState(19);//fed
+      member.removeState(20);//pekish
+      member.removeState(21);//hunger
+      member.removeState(22);//famished
+      member.removeState(23);//starving
+    } else if(member._hunger > 400){
+      member.removeState(18);//full
+      member.removeState(19);//fed
+      member.addState(20);//pekish
+      member.removeState(21);//hunger
+      member.removeState(22);//famished
+      member.removeState(23);//starving
+    } else if(member._hunger > 200){
+      member.removeState(18);//full
+      member.removeState(19);//fed
+      member.removeState(20);//pekish
+      member.addState(21);//hunger
+      member.removeState(22);//famished
+      member.removeState(23);//starving
+    } else if(member._hunger > 0){
+      member.removeState(18);//full
+      member.removeState(19);//fed
+      member.removeState(20);//pekish
+      member.removeState(21);//hunger
+      member.addState(22);//famished
+      member.removeState(23);//starving
+    } else {
+      member.removeState(18);//full
+      member.removeState(19);//fed
+      member.removeState(20);//pekish
+      member.removeState(21);//hunger
+      member.removeState(22);//famished
+      member.addState(23);//starving
+    }
+  }
+
+  function checkSleep(member){
+    if(member._sleep > 1000){
+      member._sleep = 1000;
+    }
+    if(member._sleep > 800){
+      member.addState(11);//well rested
+      member.removeState(12);//awake
+      member.removeState(13);//weary
+      member.removeState(14);//drowsy
+      member.removeState(15);//tired
+      member.removeState(16);//sleepy
+      member.removeState(17);//passing out
+    } else if(member._sleep > 600){
+      member.removeState(11);//well rested
+      member.addState(12);//awake
+      member.removeState(13);//weary
+      member.removeState(14);//drowsy
+      member.removeState(15);//tired
+      member.removeState(16);//sleepy
+      member.removeState(17);//passing out
+    } else if(member._sleep > 450){
+      member.removeState(11);//well rested
+      member.removeState(12);//awake
+      member.addState(13);//weary
+      member.removeState(14);//drowsy
+      member.removeState(15);//tired
+      member.removeState(16);//sleepy
+      member.removeState(17);//passing out
+    } else if(member._sleep > 300){
+      member.removeState(11);//well rested
+      member.removeState(12);//awake
+      member.removeState(13);//weary
+      member.addState(14);//drowsy
+      member.removeState(15);//tired
+      member.removeState(16);//sleepy
+      member.removeState(17);//passing out
+    } else if(member._sleep > 150){
+      member.removeState(11);//well rested
+      member.removeState(12);//awake
+      member.removeState(13);//weary
+      member.removeState(14);//drowsy
+      member.addState(15);//tired
+      member.removeState(16);//sleepy
+      member.removeState(17);//passing out
+    } else if(member._sleep > 0){
+      member.removeState(11);//well rested
+      member.removeState(12);//awake
+      member.removeState(13);//weary
+      member.removeState(14);//drowsy
+      member.removeState(15);//tired
+      member.addState(16);//sleepy
+      member.removeState(17);//passing out
+    } else {
+      member.removeState(11);//well rested
+      member.removeState(12);//awake
+      member.removeState(13);//weary
+      member.removeState(14);//drowsy
+      member.removeState(15);//tired
+      member.removeState(16);//sleepy
+      member.addState(17);//passing out
+    }
   }
    
 })(); 
