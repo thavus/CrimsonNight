@@ -75,6 +75,7 @@
   var handleTime = function() {
     if(onMap() && !isTalking() && !isBattling()){
       console.log(onMap());
+      updateTime();
       updatePartyMembers();
     }else{
       /* This means player is not on the map, or is in a message.
@@ -84,18 +85,39 @@
     }
   }
 
-  function getSavedTime(){
+  Utils.getTime = function(minutes, hours){
+    var timeStr = ':';
+    timeStr = hours + timeStr;
+    timeStr = (minutes < 10) ? timeStr + '0' + minutes : timeStr + minutes;
 
-    if(year === 0 ){
-      minute = 0;
-      hour = 0;
-      day = 0;
-      month = 0;
-      year = 0;
+    return timeStr;
+  };
+
+  Utils.sleep = function(hoursSlept){
+    $gameVariables.setValue(1, $gameVariables.value(1) + hoursSlept);
+    if($gameVariables.value(1) >= 24){
+      $gameVariables.setValue(1, $gameVariables.value(1) - 24);
+      $gameVariables.setValue(3, $gameVariables.value(3) + 1);
     }
-    return hasSavedTime
   }
 
+  function updateTime(){
+    var minutes = $gameVariables.value(2);
+    months = [31,30,31,28,31,30,31,30,30,31,30,31];
+    $gameVariables.setValue(2, minutes + 1);
+    if($gameVariables.value(2) >= 60){
+      $gameVariables.setValue(2, $gameVariables.value(2) - 60);
+      $gameVariables.setValue(1, $gameVariables.value(1) + 1);
+    }
+    if($gameVariables.value(1) >= 24){
+      $gameVariables.setValue(1, $gameVariables.value(1) - 24);
+      $gameVariables.setValue(3, $gameVariables.value(3) + 1);
+    }
+    if($gameVariables.value(3) >= months[$gameVariables.value(8)]){
+      $gameVariables.setValue(8, $gameVariables.value(8) - months[$gameVariables.value(8)] + 1);
+      $gameVariables.setValue(9, $gameVariables.value(9) + 1);
+    }
+  }
 
   function updatePartyMembers(){
 
@@ -127,47 +149,17 @@
       member._hunger = 1000;
     }
     if(member._hunger > 800){
-      member.addState(18);//full
-      member.removeState(19);//fed
-      member.removeState(20);//pekish
-      member.removeState(21);//hunger
-      member.removeState(22);//famished
-      member.removeState(23);//starving
+      handleHungerStates(member, 18);
     } else if(member._hunger > 600){
-      member.removeState(18);//full
-      member.addState(19);//fed
-      member.removeState(20);//pekish
-      member.removeState(21);//hunger
-      member.removeState(22);//famished
-      member.removeState(23);//starving
+      handleHungerStates(member, 19);
     } else if(member._hunger > 400){
-      member.removeState(18);//full
-      member.removeState(19);//fed
-      member.addState(20);//pekish
-      member.removeState(21);//hunger
-      member.removeState(22);//famished
-      member.removeState(23);//starving
+      handleHungerStates(member, 20);
     } else if(member._hunger > 200){
-      member.removeState(18);//full
-      member.removeState(19);//fed
-      member.removeState(20);//pekish
-      member.addState(21);//hunger
-      member.removeState(22);//famished
-      member.removeState(23);//starving
+      handleHungerStates(member, 21);
     } else if(member._hunger > 0){
-      member.removeState(18);//full
-      member.removeState(19);//fed
-      member.removeState(20);//pekish
-      member.removeState(21);//hunger
-      member.addState(22);//famished
-      member.removeState(23);//starving
+      handleHungerStates(member, 22);
     } else {
-      member.removeState(18);//full
-      member.removeState(19);//fed
-      member.removeState(20);//pekish
-      member.removeState(21);//hunger
-      member.removeState(22);//famished
-      member.addState(23);//starving
+      handleHungerStates(member, 23);
     }
   }
 
@@ -176,61 +168,43 @@
       member._sleep = 1000;
     }
     if(member._sleep > 800){
-      member.addState(11);//well rested
-      member.removeState(12);//awake
-      member.removeState(13);//weary
-      member.removeState(14);//drowsy
-      member.removeState(15);//tired
-      member.removeState(16);//sleepy
-      member.removeState(17);//passing out
+      handleSleepStates(member, 11);
     } else if(member._sleep > 600){
-      member.removeState(11);//well rested
-      member.addState(12);//awake
-      member.removeState(13);//weary
-      member.removeState(14);//drowsy
-      member.removeState(15);//tired
-      member.removeState(16);//sleepy
-      member.removeState(17);//passing out
+      handleSleepStates(member, 12);
     } else if(member._sleep > 450){
-      member.removeState(11);//well rested
-      member.removeState(12);//awake
-      member.addState(13);//weary
-      member.removeState(14);//drowsy
-      member.removeState(15);//tired
-      member.removeState(16);//sleepy
-      member.removeState(17);//passing out
+      handleSleepStates(member, 13);
     } else if(member._sleep > 300){
-      member.removeState(11);//well rested
-      member.removeState(12);//awake
-      member.removeState(13);//weary
-      member.addState(14);//drowsy
-      member.removeState(15);//tired
-      member.removeState(16);//sleepy
-      member.removeState(17);//passing out
+      handleSleepStates(member, 14);
     } else if(member._sleep > 150){
-      member.removeState(11);//well rested
-      member.removeState(12);//awake
-      member.removeState(13);//weary
-      member.removeState(14);//drowsy
-      member.addState(15);//tired
-      member.removeState(16);//sleepy
-      member.removeState(17);//passing out
+      handleSleepStates(member, 15);
     } else if(member._sleep > 0){
-      member.removeState(11);//well rested
-      member.removeState(12);//awake
-      member.removeState(13);//weary
-      member.removeState(14);//drowsy
-      member.removeState(15);//tired
-      member.addState(16);//sleepy
-      member.removeState(17);//passing out
+      handleSleepStates(member, 16);
     } else {
-      member.removeState(11);//well rested
-      member.removeState(12);//awake
-      member.removeState(13);//weary
-      member.removeState(14);//drowsy
-      member.removeState(15);//tired
-      member.removeState(16);//sleepy
-      member.addState(17);//passing out
+      handleSleepStates(member, 17);
+    }
+  }
+
+  function handleSleepStates(member, stateId){
+    stateIds = [11, 12, 13, 14, 15, 16, 17];
+    length = stateIds.length;
+    for(var i = 0; i < length; ++i){
+      if(stateIds[i] === stateId){
+        member.addState(stateId);
+      }else{
+        member.removeState(stateIds[i]);
+      }
+    }
+  }
+
+  function handleHungerStates(member, stateId){
+    stateIds = [18, 19, 20, 21, 22, 23];
+    length = stateIds.length;
+    for(var i = 0; i < length; ++i){
+      if(stateIds[i] === stateId){
+        member.addState(stateId);
+      }else{
+        member.removeState(stateIds[i]);
+      }
     }
   }
    
