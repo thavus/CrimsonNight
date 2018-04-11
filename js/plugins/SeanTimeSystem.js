@@ -103,7 +103,11 @@
 
   function updateTime(){
     var minutes = $gameVariables.value(2);
-    months = [31,30,31,28,31,30,31,30,30,31,30,31];
+    var hours = $gameVariables.value(1);
+    var days = $gameVariables.value(3);
+    var months = $gameVariables.value(8);
+    var years = $gameVariables.value(9);
+    var monthArr = [31,30,31,28,31,30,31,30,30,31,30,31];
     $gameVariables.setValue(2, minutes + 1);
     if($gameVariables.value(2) >= 60){
       $gameVariables.setValue(2, $gameVariables.value(2) - 60);
@@ -113,8 +117,12 @@
       $gameVariables.setValue(1, $gameVariables.value(1) - 24);
       $gameVariables.setValue(3, $gameVariables.value(3) + 1);
     }
-    if($gameVariables.value(3) >= months[$gameVariables.value(8)]){
-      $gameVariables.setValue(8, $gameVariables.value(8) - months[$gameVariables.value(8)] + 1);
+    if($gameVariables.value(3) >= monthArr[$gameVariables.value(8)-1]){
+      $gameVariables.setValue(3, $gameVariables.value(8) - monthArr[$gameVariables.value(3)-1] + 1);
+      $gameVariables.setValue(8, $gameVariables.value(8) + 1);
+    }
+    if($gameVariables.value(8) >= monthArr.length){
+      $gameVariables.setValue(8, $gameVariables.value(8) - monthArr.length+1);
       $gameVariables.setValue(9, $gameVariables.value(9) + 1);
     }
   }
