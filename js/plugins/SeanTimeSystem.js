@@ -89,7 +89,7 @@
     var minutes = $gameVariables.value(2);
     var hours = $gameVariables.value(1);
     var timeStr = ':';
-    timeStr = (hours > 12) hours - 11 : hours + timeStr;
+    timeStr = (hours > 12) ? hours - 11 : hours + timeStr;
     timeStr = (minutes < 10) ? timeStr + '0' + minutes : timeStr + minutes;
     timeStr = timeStr + (hours < 12) ? ' AM' : ' PM';
     return timeStr;
@@ -99,12 +99,12 @@
     var days = $gameVariables.value(3);
     weekIndex = days % 7;
     weekArr = [
-    'Moonday'
-    'Towerday'
-    'Wineday'
-    'Thunderday'
-    'Fireday'
-    'Swordsday'
+    'Moonday',
+    'Towerday',
+    'Wineday',
+    'Thunderday',
+    'Fireday',
+    'Swordsday',
     'Saintsday'];
     return weekArr[weekIndex];
   }

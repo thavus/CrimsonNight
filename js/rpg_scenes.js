@@ -971,8 +971,8 @@ Scene_ItemBase.prototype.useItem = function() {
 };
 
 Scene_ItemBase.prototype.handleHunger = function() {
-    this.user().hunger += Number(this.item().meta['Hunger Restore']);
-    this.user().hunger = (this.user().hunger > 1000) ?  1000 : this.user().hunger;
+    this.user()._hunger += Number(this.item().meta['Hunger Restore']);
+    this.user()._hunger = (this.user()._hunger > 1000) ?  1000 : this.user()._hunger;
 }
 
 Scene_ItemBase.prototype.handleSleep = function() {

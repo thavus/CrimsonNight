@@ -2654,6 +2654,10 @@ Game_BattlerBase.prototype.hpRate = function() {
     return this.hp / this.mhp;
 };
 
+Game_BattlerBase.prototype.hungerRate = function() {
+    return this.hunger / this.mHun;
+};
+
 Game_BattlerBase.prototype.mpRate = function() {
     return this.mmp > 0 ? this.mp / this.mmp : 0;
 };

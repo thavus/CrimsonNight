@@ -538,13 +538,19 @@ Window_Base.prototype.drawCurrentAndMax = function(current, max, x, y,
     var x3 = x2 - valueWidth;
     if (x3 >= x + labelWidth) {
         this.changeTextColor(color1);
-        this.drawText(current, x3, y, valueWidth, 'right');
+        if(current){
+            this.drawText(current, x3, y, valueWidth, 'right');
+        }
         this.changeTextColor(color2);
-        this.drawText('/', x2, y, slashWidth, 'right');
+        if(current){
+            this.drawText('/', x2, y, slashWidth, 'right');
+        }
         this.drawText(max, x1, y, valueWidth, 'right');
     } else {
         this.changeTextColor(color1);
-        this.drawText(current, x1, y, valueWidth, 'right');
+        if(current){
+            this.drawText(current, x1, y, valueWidth, 'right');
+        }
     }
 };
 
@@ -570,6 +576,40 @@ Window_Base.prototype.drawActorMp = function(actor, x, y, width) {
                            this.mpColor(actor), this.normalColor());
 };
 
+Utils.getActorHunger = function(actor){
+    return Math.round(actor.hunger/10) + '%'
+}
+
+Utils.getActorMaxHunger = function(actor){
+    return Math.round(actor.mHun/10) + '%'
+}
+
+Utils.getActorSleep = function(actor){
+    return Math.round(actor.sleep/10) + '%'
+}
+
+Window_Base.prototype.drawActorHunger = function(actor, x, y, width) {
+    width = width || 186;
+    var color1 = this.hpGaugeColor1();
+    var color2 = this.hpGaugeColor2();
+    this.drawGauge(x, y, width, actor.hungerRate(), color1, color2);
+    this.changeTextColor(this.systemColor());
+    this.drawText("Hunger", x, y, 65);
+    this.drawCurrentAndMax(null, Utils.getActorHunger(actor), x, y, width,
+                           this.hpColor(actor), this.normalColor());
+};
+
+Window_Base.prototype.drawActorSleep = function(actor, x, y, width) {
+    width = width || 186;
+    var color1 = this.mpGaugeColor1();
+    var color2 = this.mpGaugeColor2();
+    this.drawGauge(x, y, width, actor.hungerRate(), color1, color2);
+    this.changeTextColor(this.systemColor());
+    this.drawText("Sleep", x, y, 60);
+    this.drawCurrentAndMax(null, Utils.getActorSleep(actor), x, y, width,
+                           this.mpColor(actor), this.normalColor());
+};
+
 Window_Base.prototype.drawActorTp = function(actor, x, y, width) {
     width = width || 96;
     var color1 = this.tpGaugeColor1();
@@ -582,15 +622,17 @@ Window_Base.prototype.drawActorTp = function(actor, x, y, width) {
 };
 
 Window_Base.prototype.drawActorSimpleStatus = function(actor, x, y, width) {
-    var lineHeight = this.lineHeight();
+    var lineHeight = this.lineHeight()-10;
     var x2 = x + 180;
     var width2 = Math.min(200, width - 180 - this.textPadding());
     this.drawActorName(actor, x, y);
     this.drawActorLevel(actor, x, y + lineHeight * 1);
     this.drawActorIcons(actor, x, y + lineHeight * 2);
-    this.drawActorClass(actor, x2, y);
-    this.drawActorHp(actor, x2, y + lineHeight * 1, width2);
-    this.drawActorMp(actor, x2, y + lineHeight * 2, width2);
+    //this.drawActorClass(actor, x2, y);
+    this.drawActorHp(actor, x2, y, width2);
+    this.drawActorMp(actor, x2, y + lineHeight * 1, width2);
+    this.drawActorHunger(actor, x2, y + lineHeight * 2, width2);
+    this.drawActorSleep(actor, x2, y + lineHeight * 3, width2);
 };
 
 Window_Base.prototype.drawItemName = function(item, x, y, width) {
@@ -2579,7 +2621,7 @@ Window_Status.prototype.lineColor = function() {
 };
 
 Window_Status.prototype.drawBasicInfo = function(x, y) {
-    var lineHeight = this.lineHeight();
+    var lineHeight = this.lineHeight() - 30;
     this.drawActorLevel(this._actor, x, y + lineHeight * 0);
     this.drawActorIcons(this._actor, x, y + lineHeight * 1);
     this.drawActorHp(this._actor, x, y + lineHeight * 2);
@@ -5523,6 +5565,7 @@ Window_BattleStatus.prototype.drawGaugeAreaWithTp = function(rect, actor) {
 Window_BattleStatus.prototype.drawGaugeAreaWithoutTp = function(rect, actor) {
     this.drawActorHp(actor, rect.x + 0, rect.y, 201);
     this.drawActorMp(actor, rect.x + 216,  rect.y, 114);
+    //this.drawActorHunger();
 };
 
 //-----------------------------------------------------------------------------
