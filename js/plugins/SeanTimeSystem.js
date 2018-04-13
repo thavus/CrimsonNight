@@ -85,13 +85,47 @@
     }
   }
 
-  Utils.getTime = function(minutes, hours){
+  Utils.getTime = function(){
+    var minutes = $gameVariables.value(2);
+    var hours = $gameVariables.value(1);
     var timeStr = ':';
-    timeStr = hours + timeStr;
+    timeStr = (hours > 12) hours - 11 : hours + timeStr;
     timeStr = (minutes < 10) ? timeStr + '0' + minutes : timeStr + minutes;
-
+    timeStr = timeStr + (hours < 12) ? ' AM' : ' PM';
     return timeStr;
   };
+
+  Utils.getDay = function(){
+    var days = $gameVariables.value(3);
+    weekIndex = days % 7;
+    weekArr = [
+    'Moonday'
+    'Towerday'
+    'Wineday'
+    'Thunderday'
+    'Fireday'
+    'Swordsday'
+    'Saintsday'];
+    return weekArr[weekIndex];
+  }
+
+  Utils.getMonth = function(){
+    var months = $gameVariables.value(8);
+    var monthArr = [
+    'Frostmoot',
+    'Deepsnow',
+    'Winterwane',
+    'Rainmoot',
+    'Palesun',
+    'Highsun',
+    'Firemoot',
+    'Firewane',
+    'Lowsun',
+    'Redfall',
+    'Snowmoot',
+    'Fellnight'];
+    return monthArr[months];
+  }
 
   Utils.sleep = function(hoursSlept){
     $gameVariables.setValue(1, $gameVariables.value(1) + hoursSlept);
@@ -107,7 +141,7 @@
     var days = $gameVariables.value(3);
     var months = $gameVariables.value(8);
     var years = $gameVariables.value(9);
-    var monthArr = [31,30,31,28,31,30,31,30,30,31,30,31];
+    var monthArr = [31,30,31,30,31,30,31,30,30,31,30,30];
     $gameVariables.setValue(2, minutes + 1);
     if($gameVariables.value(2) >= 60){
       $gameVariables.setValue(2, $gameVariables.value(2) - 60);
