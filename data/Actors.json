@@ -1,6 +1,6 @@
 [
 null,
-{"id":1,"battlerName":"Actor2_4","characterIndex":3,"characterName":"Actor2","classId":1,"equips":[1,1,2,3,0],"faceIndex":3,"faceName":"Actor2","traits":[],"initialLevel":1,"maxLevel":99,"name":"Hero","nickname":"","note":"<Column 1 Variables: 4>","profile":""},
+{"id":1,"battlerName":"Actor2_4","characterIndex":3,"characterName":"Actor2","classId":1,"equips":[1,1,2,3,0],"faceIndex":3,"faceName":"Actor2","traits":[],"initialLevel":1,"maxLevel":99,"name":"Liliana","nickname":"Lily","note":"<Column 1 Variables: 4>","profile":""},
 {"id":2,"battlerName":"","characterIndex":0,"characterName":"","classId":1,"equips":[0,0,0,0,0],"faceIndex":0,"faceName":"","traits":[],"initialLevel":1,"maxLevel":99,"name":"","nickname":"","note":"","profile":""},
 {"id":3,"battlerName":"","characterIndex":0,"characterName":"","classId":1,"equips":[0,0,0,0,0],"faceIndex":0,"faceName":"","traits":[],"initialLevel":1,"maxLevel":99,"name":"","nickname":"","note":"","profile":""},
 {"id":4,"battlerName":"","characterIndex":0,"characterName":"","classId":1,"equips":[0,0,0,0,0],"faceIndex":0,"faceName":"","traits":[],"initialLevel":1,"maxLevel":99,"name":"","nickname":"","note":"","profile":""}

@@ -594,7 +594,7 @@ Window_Base.prototype.drawActorHunger = function(actor, x, y, width) {
     var color2 = this.hpGaugeColor2();
     this.drawGauge(x, y, width, actor.hungerRate(), color1, color2);
     this.changeTextColor(this.systemColor());
-    this.drawText("Hunger", x, y, 65);
+    this.drawText("Hunger", x, y, 75);
     this.drawCurrentAndMax(null, Utils.getActorHunger(actor), x, y, width,
                            this.hpColor(actor), this.normalColor());
 };
@@ -622,17 +622,17 @@ Window_Base.prototype.drawActorTp = function(actor, x, y, width) {
 };
 
 Window_Base.prototype.drawActorSimpleStatus = function(actor, x, y, width) {
-    var lineHeight = this.lineHeight()-10;
+    var lineHeight = this.lineHeight();
     var x2 = x + 180;
     var width2 = Math.min(200, width - 180 - this.textPadding());
     this.drawActorName(actor, x, y);
     this.drawActorLevel(actor, x, y + lineHeight * 1);
     this.drawActorIcons(actor, x, y + lineHeight * 2);
     //this.drawActorClass(actor, x2, y);
-    this.drawActorHp(actor, x2, y, width2);
-    this.drawActorMp(actor, x2, y + lineHeight * 1, width2);
-    this.drawActorHunger(actor, x2, y + lineHeight * 2, width2);
-    this.drawActorSleep(actor, x2, y + lineHeight * 3, width2);
+    this.drawActorHp(actor, x2, y-10, width2);
+    this.drawActorMp(actor, x2, y + (lineHeight-17) * 1, width2);
+    this.drawActorHunger(actor, x2, y + (lineHeight-12) * 2, width2);
+    this.drawActorSleep(actor, x2, y + (lineHeight-10) * 3, width2);
 };
 
 Window_Base.prototype.drawItemName = function(item, x, y, width) {
@@ -1737,7 +1737,7 @@ Window_MenuStatus.prototype.constructor = Window_MenuStatus;
 
 Window_MenuStatus.prototype.initialize = function(x, y) {
     var width = this.windowWidth();
-    var height = this.windowHeight();
+    var height = this.windowHeight();//sean
     Window_Selectable.prototype.initialize.call(this, x, y, width, height);
     this._formationMode = false;
     this._pendingIndex = -1;
@@ -1746,7 +1746,7 @@ Window_MenuStatus.prototype.initialize = function(x, y) {
 };
 
 Window_MenuStatus.prototype.windowWidth = function() {
-    return Graphics.boxWidth - 240;
+    return Graphics.boxWidth - (240 + Window_Base._faceWidth);
 };
 
 Window_MenuStatus.prototype.windowHeight = function() {
@@ -1792,14 +1792,14 @@ Window_MenuStatus.prototype.drawItemImage = function(index) {
     var actor = $gameParty.members()[index];
     var rect = this.itemRect(index);
     this.changePaintOpacity(actor.isBattleMember());
-    this.drawActorFace(actor, rect.x + 1, rect.y + 1, 144, rect.height - 2);
+    // /this.drawActorFace(actor, rect.x + 1, rect.y + 1, 144, rect.height - 2);
     this.changePaintOpacity(true);
 };
 
 Window_MenuStatus.prototype.drawItemStatus = function(index) {
     var actor = $gameParty.members()[index];
     var rect = this.itemRect(index);
-    var x = rect.x + 162;
+    var x = rect.x + 155 - Window_Base._faceWidth;
     var y = rect.y + rect.height / 2 - this.lineHeight() * 1.5;
     var width = rect.width - x - this.textPadding();
     this.drawActorSimpleStatus(actor, x, y, width);
@@ -2150,7 +2150,7 @@ Window_SkillStatus.prototype.refresh = function() {
         var h = this.height - this.padding * 2;
         var y = h / 2 - this.lineHeight() * 1.5;
         var width = w - 162 - this.textPadding();
-        this.drawActorFace(this._actor, 0, 0, 144, h);
+        //this.drawActorFace(this._actor, 0, 0, 144, h);
         this.drawActorSimpleStatus(this._actor, 162, y, width);
     }
 };
@@ -2595,7 +2595,7 @@ Window_Status.prototype.drawBlock1 = function(y) {
 };
 
 Window_Status.prototype.drawBlock2 = function(y) {
-    this.drawActorFace(this._actor, 12, y);
+    //this.drawActorFace(this._actor, 12, y);
     this.drawBasicInfo(204, y);
     this.drawExpInfo(456, y);
 };
@@ -3571,7 +3571,7 @@ Window_NameEdit.prototype.drawChar = function(index) {
 
 Window_NameEdit.prototype.refresh = function() {
     this.contents.clear();
-    this.drawActorFace(this._actor, 0, 0);
+    //this.drawActorFace(this._actor, 0, 0);
     for (var i = 0; i < this._maxLength; i++) {
         this.drawUnderline(i);
     }
