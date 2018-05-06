@@ -7,8 +7,8 @@
   
  
 /*:
- * @plugindesc Tracks in game time and reacts   // Describe your plugin
- * @author Sean        // your name goes here
+ * @plugindesc Tracks in game time and reacts
+ * @author Sean Patnode
  */
 
 (function() {
