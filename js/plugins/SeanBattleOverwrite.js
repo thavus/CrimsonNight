@@ -12,7 +12,7 @@
  */
 
 (function() {
-  var parameters = PluginManager.parameters('SeanMenuOverwrite');
+  var parameters = PluginManager.parameters('SeanBattleOverwrite');
    
   
 // Now find something you want to edit in the core plugins.  You can
@@ -57,22 +57,27 @@
   // })();
 
 
+Game_Troop.prototype.setup = function(troopId) {
+    var clientWidth = Window_Base.width;
+    var clientHeight = Window_Base.height;
+    this.clear();
+    this._troopId = troopId;
+    this._enemies = [];
+    this.troop().members.forEach(function(member) {
+        if ($dataEnemies[member.enemyId]) {
+            var enemyId = member.enemyId;
+            var x = member.x;
+            var y = member.y;
+            var enemy = new Game_Enemy(enemyId, x, y);
+            if (member.hidden) {
+                enemy.hide();
+            } else {
 
-Window_MenuStatus.prototype.maxItems = function() {
-    return 1;
-};
-
-Window_MenuStatus.prototype.numVisibleRows = function() {
-    return 1;
-};
-
-Window_MenuStatus.prototype.itemHeight = function() {
-    var clientHeight = this.height - this.padding * 2;
-    return Math.floor(clientHeight / this.numVisibleRows());
-};
-
-Window_MenuStatus.prototype.windowHeight = function() {
-    return 1450;// use clientHeight?
+            }
+            this._enemies.push(enemy);
+        }
+    }, this);
+    this.makeUniqueNames();
 };
 
    
