@@ -1,5 +1,5 @@
 //=============================================================================
-// Sean's Menu Overwrite
+// Sean's Battle Overwrite
 // by Sean / Thavus / Roundpitt
 // Date: 4/26/2018
  
@@ -7,7 +7,7 @@
   
  
 /*:
- * @plugindesc Overwrites the existing menus   
+ * @plugindesc Overwrites the existing battle system   
  * @author Sean Patnode  
  */
 
