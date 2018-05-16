@@ -74,7 +74,6 @@
 
   var handleTime = function() {
     if(onMap() && !isTalking() && !isBattling()){
-      console.log(onMap());
       updateTime();
       updatePartyMembers();
     }else{

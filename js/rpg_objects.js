@@ -7651,6 +7651,7 @@ Game_Player.prototype.moveByInput = function() {
             direction = this.findDirectionTo(x, y);
         }
         if (direction > 0) {
+            console.log("move");
             this.executeMove(direction);
         }
     }
